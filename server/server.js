@@ -90,10 +90,27 @@ app.post("/api/auth/login", async (req, res) => {
     res.status(500).json({ error: "Server error during login" });
   }
 });
+
+// --- ADMIN MIDDLEWARE ---
+const isAdmin = async (req, res, next) => {
+  const token = req.headers.authorization?.split(" ")[1];
+  if (!token) return res.status(401).json({ error: "No protocol token" });
+
+  try {
+    const decoded = jwt.verify(token, process.env.JWT_SECRET);
+    if (decoded.role !== 'admin') {
+      return res.status(403).json({ error: "Access Denied: Admin Clearance Required" });
+    }
+    next();
+  } catch (err) {
+    res.status(401).json({ error: "Authentication Failed" });
+  }
+};
+
 // --- ADMIN & DYNAMIC BRAND ROUTES ---
 
 // 1. Admin: Add New Brand with Quizzes
-app.post("/api/admin/add-brand", async (req, res) => {
+app.post("/api/admin/add-brand", isAdmin, async (req, res) => {
   try {
     const newBrand = new Brand(req.body);
     await newBrand.save();
@@ -127,7 +144,7 @@ app.get("/api/brands/:brandId", async (req, res) => {
 });
 
 // 4. Update Existing Brand Node
-app.put("/api/admin/update-brand/:id", async (req, res) => {
+app.put("/api/admin/update-brand/:id", isAdmin, async (req, res) => {
   try {
     const updatedBrand = await Brand.findByIdAndUpdate(
       req.params.id,
@@ -141,7 +158,7 @@ app.put("/api/admin/update-brand/:id", async (req, res) => {
 });
 
 // 5. Delete Brand Node
-app.delete("/api/admin/delete-brand/:id", async (req, res) => {
+app.delete("/api/admin/delete-brand/:id", isAdmin, async (req, res) => {
   try {
     await Brand.findByIdAndDelete(req.params.id);
     res.json({ message: "NODE TERMINATED: Brand removed from Nexus" });
