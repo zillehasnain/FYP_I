@@ -46,20 +46,21 @@ const Home = () => {
           <div className="text-center animate-pulse text-emerald-500 font-mono">SCANNING NETWORK...</div>
         ) : (
           <div className="grid grid-cols-1 md:grid-cols-4 gap-10 max-w-7xl mx-auto">
-            {brands.length > 0 ? (
-              brands.slice(0, 4).map((brand) => (
+            {/* The ?. ensures it only maps if 'brands' is actually an array */}
+            {brands?.length > 0 ? (
+              brands.map((brand) => (
                 <BrandCard 
                     key={brand._id} 
                     id={brand.brandId} 
                     name={brand.name} 
                     tag={brand.category} 
                     img={brand.image} 
-                    accent={`group-hover:shadow-[${brand.accentColor}]/40`} 
+                    accent={brand.accentColor} 
                 />
               ))
             ) : (
-              <div className="col-span-4 text-center text-gray-600 border border-dashed border-white/10 p-20 rounded-[40px]">
-                NO ACTIVE NODES. ACCESS OVERLORD PANEL TO DEPLOY BRANDS.
+              <div className="col-span-4 text-center text-gray-500 py-20 font-mono uppercase tracking-[0.5em]">
+                 Connecting to Nexus...
               </div>
             )}
           </div>
