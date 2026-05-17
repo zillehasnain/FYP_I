@@ -1,6 +1,6 @@
-const express = require('express');
-const mongoose = require('mongoose');
-const cors = require('cors'); 
+const express = require("express");
+const mongoose = require("mongoose");
+const cors = require("cors");
 const dotenv = require("dotenv");
 const bcrypt = require("bcryptjs");
 const jwt = require("jsonwebtoken");
@@ -12,14 +12,18 @@ dotenv.config();
 const app = express(); // Move this up
 
 // --- MIDDLEWARE ---
-app.use(cors({
-    origin: "http://localhost:5173",
+app.use(
+  cors({
+    origin: [
+      "http://localhost:5173",
+      "https://victorious-ground-0443e4d00.7.azurestaticapps.net",
+    ],
     methods: ["GET", "POST", "PUT", "DELETE"],
-    credentials: true
-}));
+    credentials: true,
+  }),
+);
 
 app.use(express.json());
-
 
 // --- DATABASE CONNECTION ---
 mongoose
@@ -63,19 +67,21 @@ app.post("/api/auth/login", async (req, res) => {
     if (!user) return res.status(400).json({ error: "Identity not found" });
 
     const isMatch = await bcrypt.compare(password, user.password);
-    if (!isMatch)
-      return res.status(400).json({ error: "Invalid Credentials" });
+    if (!isMatch) return res.status(400).json({ error: "Invalid Credentials" });
 
     // Include role in the token and response
-    const token = jwt.sign({ id: user._id, role: user.role }, process.env.JWT_SECRET);
+    const token = jwt.sign(
+      { id: user._id, role: user.role },
+      process.env.JWT_SECRET,
+    );
     console.log("Login successful for user:", user._id);
     res.json({
       token,
-      user: { 
-        id: user._id, 
-        username: user.username, 
-        email: user.email, 
-        role: user.role // This will be "admin" for ZILLE
+      user: {
+        id: user._id,
+        username: user.username,
+        email: user.email,
+        role: user.role, // This will be "admin" for ZILLE
       },
     });
   } catch (err) {
@@ -92,7 +98,9 @@ app.post("/api/admin/add-brand", async (req, res) => {
     await newBrand.save();
     res.status(201).json({ message: "Protocol Deployed: Brand & Quiz Active" });
   } catch (err) {
-    res.status(400).json({ error: "Failed to deploy brand node: " + err.message });
+    res
+      .status(400)
+      .json({ error: "Failed to deploy brand node: " + err.message });
   }
 });
 
@@ -120,7 +128,11 @@ app.get("/api/brands/:brandId", async (req, res) => {
 // 4. Update Existing Brand Node
 app.put("/api/admin/update-brand/:id", async (req, res) => {
   try {
-    const updatedBrand = await Brand.findByIdAndUpdate(req.params.id, req.body, { new: true });
+    const updatedBrand = await Brand.findByIdAndUpdate(
+      req.params.id,
+      req.body,
+      { new: true },
+    );
     res.json({ message: "PROTOCOL UPDATED: Node Reconfigured", updatedBrand });
   } catch (err) {
     res.status(400).json({ error: "Update failed" });
@@ -195,8 +207,8 @@ app.get("/api/leaderboard", async (req, res) => {
   }
 });
 // server/server.js
-const PORT = process.env.PORT || 8080; 
+const PORT = process.env.PORT || 8080;
 
-app.listen(PORT, '0.0.0.0', () => {
-    console.log(`🚀 Server online on Azure port ${PORT}`);
+app.listen(PORT, "0.0.0.0", () => {
+  console.log(`🚀 Server online on Azure port ${PORT}`);
 });
