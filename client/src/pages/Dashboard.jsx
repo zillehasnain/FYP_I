@@ -7,7 +7,7 @@ import VaultBG from '../components/VaultBG';
 import axios from 'axios';
 
 const Dashboard = () => {
-  const API_URL = import.meta.env.VITE_API_URL;
+  const API_URL = import.meta.env.VITE_API_URL || "https://brandburst.azurewebsites.net";
   const navigate = useNavigate();
   const [userProfile, setUserProfile] = useState(null);
   const [myVouchers, setMyVouchers] = useState([]);

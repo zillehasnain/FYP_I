@@ -70,7 +70,7 @@ const Scene3D = ({ isLogin, transitioning }) => {
 };
 
 const Auth = () => {
-  const API_URL = import.meta.env.VITE_API_URL;
+  const API_URL = import.meta.env.VITE_API_URL || "https://brandburst.azurewebsites.net";
   const navigate = useNavigate();
   const [isLogin, setIsLogin] = useState(true);
   const [transitioning, setTransitioning] = useState(false);
