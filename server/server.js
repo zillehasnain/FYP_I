@@ -12,17 +12,12 @@ dotenv.config();
 const app = express(); // Move this up
 
 // --- MIDDLEWARE ---
-app.use(
-  cors({
-    origin: [
-      "http://localhost:5173",
-      "http://127.0.0.1:5173", 
-      "https://victorious-ground-0443e4d00.7.azurestaticapps.net",
-    ],
+app.use(cors({
+    origin: ["http://localhost:5173", /\.vercel\.app$/],
     methods: ["GET", "POST", "PUT", "DELETE"],
-    credentials: true,
-  }),
-);
+    credentials: true
+}));
+    
 
 app.use(express.json());
 
