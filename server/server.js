@@ -13,7 +13,7 @@ const app = express(); // Move this up
 
 // --- MIDDLEWARE ---
 app.use(cors({
-    origin: ["http://localhost:5173", /\.vercel\.app$/],
+    origin: ["http://localhost:5173"],
     methods: ["GET", "POST", "PUT", "DELETE"],
     credentials: true
 }));
@@ -222,9 +222,8 @@ app.get("/api/leaderboard", async (req, res) => {
 // server/server.js
 const PORT = process.env.PORT || 8080;
 
-app.listen(PORT, "0.0.0.0", () => {
-  console.log(`🚀 Server online on Azure port ${PORT}`);
+app.listen(PORT, "localhost", () => {
+  console.log(`🚀 Server running on http://localhost:${PORT}`);
 });
 
-// Export the app for Vercel serverless functions
-module.exports = app;
+
